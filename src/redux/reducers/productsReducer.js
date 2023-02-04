@@ -7,14 +7,18 @@ import {
     PRODUCTBYID_FETCH_ERROR,
     BUYPRODUCT_STARTED,
     BUYPRODUCT_SUCCESS,
-    BUYPRODUCT_ERROR
+    BUYPRODUCT_ERROR,
+    ADDTOCART_STARTED,
+    ADDTOCART_SUCCESS,
+    ADDTOCART_ERROR
 } from "../actions/products"
 
 const defaultState = {
     info: [],
     product: {},
     loading: false,
-    message: ""
+    message: "",
+    products: []
 }
 
 function ProductsReducer(state = defaultState, action){
@@ -66,7 +70,24 @@ function ProductsReducer(state = defaultState, action){
                     return Object.assign({}, state, {
                         ...state,
                         loading: false,
-                    });   
+                    });  
+                case ADDTOCART_STARTED:
+                    return Object.assign({}, state, {
+                        ...state,
+                        loading: true
+                    });
+                case ADDTOCART_SUCCESS:
+                    return Object.assign({}, state, {
+                        ...state,
+                        loading: false,
+                        message: action?.payload?.message,
+                        products: action?.payload?.products
+                    });
+                case ADDTOCART_ERROR:
+                    return Object.assign({}, state, {
+                        ...state,
+                        loading: false,
+                    }); 
         default:
             return state;
     }

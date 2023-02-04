@@ -1,4 +1,4 @@
-import { Box, Button, CardMedia, Divider, Grid, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, CardMedia, Divider, Grid, Modal, Tab, Tabs, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -6,6 +6,7 @@ import actions from '../redux/actions/products'
 import Lightbox from 'react-image-lightbox'
 import PropTypes from 'prop-types';
 import "react-image-lightbox/style.css";
+import { AddToCart } from '../config/config'
 
 
 function TabPanel(props) {
@@ -44,14 +45,16 @@ function a11yProps(index) {
 const Product = (props) => {
     const params = useParams()
     const [open, setOpen] = useState(false)
-    const [color, setColor] = useState(props.info?.product_color ? props.info?.product_color[0] : 'black')
-    const [size, setSize] = useState(props.info?.product_size ? props.info?.product_size[0] : 40)
+    const [color, setColor] = useState('')
+    const [size, setSize] = useState('')
     const [image, setImage] = useState(props.info?.product_images ? props.info?.product_images[0] : "Loading...")
     const [imageNum, setImageNum] = useState(0)
 
 
     useEffect(() => {
         props.fetchProductById(params?.pid)
+        // setColor(props.info?.product_color[0])
+        // setSize(props.info?.product_size[0])
     }, [])
 
     const handleColor = (event, newValue) => {
@@ -64,6 +67,25 @@ const Product = (props) => {
 
     const handleImage = (event, newValue) => {
         setImageNum(newValue)
+    }
+
+    const addToCart = async (color, size, id) => {
+        let data = {
+            product_color: color,
+            product_size: size,
+            product_id: id,
+            product_price: props.info?.product_prize,
+            product_image: props.info?.product_images[0],
+            product_name: props.info?.product_name
+        }
+        await AddToCart(data).then(response => {
+            if (response?.status === 200) {
+                <Modal open={true} />
+            } else {
+
+            }
+        })
+        return
     }
 
     return (
@@ -117,7 +139,7 @@ const Product = (props) => {
                             {props.info?.product_description}
                         </Typography>
                         <Typography sx={{ marginTop: 5 }}>
-                           Price: ${props.info?.product_prize}
+                            Price: ${props.info?.product_prize}
                         </Typography>
                         <Typography sx={{ fontSize: 10 }}>
                             Tax included. Shipping calculated at checkout.
@@ -129,7 +151,7 @@ const Product = (props) => {
                         <Tabs sx={{ marginTop: 1 }} onChange={handleColor} value={color}>
                             {props.info?.product_color?.map(zone => {
                                 return (
-                                    <Tab label={zone} value={zone} key={zone} />
+                                    <Tab label={zone} value={zone} key={zone} onChange={() => handleColor(zone)} />
                                 )
                             })}
                         </Tabs>
@@ -139,11 +161,11 @@ const Product = (props) => {
                         <Tabs onChange={handleSize} value={size}>
                             {props.info?.product_size?.map(zone => {
                                 return (
-                                    <Tab selected label={zone} value={zone} key={zone} />
+                                    <Tab selected label={zone} value={zone} key={zone} onChange={() => handleSize(zone)} />
                                 )
                             })}
                         </Tabs>
-                        <Button fullWidth variant='outlined' sx={{ height: 45, marginTop: 3, color: 'black', borderBlockColor: 'black', fontWeight: 'bold' }}>ADD TO CART</Button>
+                        <Button fullWidth variant='outlined' sx={{ height: 45, marginTop: 3, color: 'black', borderBlockColor: 'black', fontWeight: 'bold' }} onClick={() => addToCart(color, size, params?.pid)}>ADD TO CART</Button>
                         <Button fullWidth sx={{ marginTop: 3, height: 45, fontWeight: 'bold', backgroundColor: 'black' }} href={`/product/checkout/${params?.pid}`} variant="contained">Buy It Now</Button>
                     </Grid>
                     <Grid item xs={1}></Grid>

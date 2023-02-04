@@ -1,4 +1,4 @@
-import { GetProducts, GetProductByID, BuyProductt } from "../../config/config";
+import { GetProducts, GetProductByID, BuyProductt, getAllAddToCart } from "../../config/config";
 
 export const PRODUCTS_FETCH_STARTED = "PRODUCTS_FETCH_STARTED";
 export const PRODUCTS_FETCH_SUCCESS = "PRODUCTS_FETCH_SUCCESS";
@@ -11,6 +11,10 @@ export const PRODUCTBYID_FETCH_ERROR = "PRODUCTBYID_FETCH_ERROR"
 export const BUYPRODUCT_STARTED = "BUYPRODUCT_STARTED"
 export const BUYPRODUCT_SUCCESS = "BUYPRODUCT_SUCCESS"
 export const BUYPRODUCT_ERROR = "BUYPRODUCT_ERROR"
+
+export const ADDTOCART_STARTED = "ADDTOCART_STARTED"
+export const ADDTOCART_SUCCESS = "ADDTOCART_SUCCESS"
+export const ADDTOCART_ERROR = "ADDTOCART_ERROR"
 
 const actions = {
     fetchProducts: () => async (dispatch) => {
@@ -89,7 +93,34 @@ const actions = {
                 type: BUYPRODUCT_ERROR
             })
         }
-    }
+    },
+
+    GetAllCart:() => async (dispatch) => {
+        try{
+            dispatch({
+                type: ADDTOCART_STARTED
+            })
+            await getAllAddToCart().then(response => {
+                if(response?.status === 200){
+                    dispatch({
+                        type: ADDTOCART_SUCCESS,
+                        payload: {
+                            message: response?.data?.message,
+                            products: response?.data?.data
+                        }
+                    })
+                }else{
+                    dispatch({
+                        type: ADDTOCART_ERROR
+                    })
+                }
+            })
+        }catch(error){
+            dispatch({
+                type: ADDTOCART_ERROR
+            })
+        }
+    },
 }
 
 

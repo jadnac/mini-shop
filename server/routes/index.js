@@ -7,4 +7,10 @@ module.exports = (app) => {
 
     const payment = require('./payment.routes')
     app.use('/payment', payment)
+
+    const addToCart = require('./addToCart.routes')
+    app.use('/addtocart', addToCart)
+
+    const contactUs = require('./contactus.routes')
+    app.use('/contactus', contactUs)
 }

@@ -1,91 +1,121 @@
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
+import { Button, Menu, MenuItem } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+const pages = [
+  {
+    name: 'Home',
+    link: '/'
   },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
+
+  {
+    name: 'ContactUs',
+    link: '/contactus'
   },
-}));
+  {
+    name: 'AddToCart',
+    link: '/addtocart'
+  }
+]
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
+function Navbar() {
+  const [anchorElNav, setAnchorElNav] = useState()
 
-export default function Navbar() {
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+
   return (
-    <Box sx={{ flexGrow: 1, marginBottom:  10}}>
-      <AppBar position="fixed" sx={{backgroundColor: 'black'}}>
+    <Box sx={{ flexGrow: 1, marginBottom: 10 }}>
+      <AppBar position="fixed" sx={{ backgroundColor: 'black' }}>
         <Toolbar>
-          <IconButton
-            size="medium"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            {/* <MenuIcon /> */}
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component={Link}
-            to='/'
-            sx={{ flexGrow: 1, textDecoration: 'none', color: 'white' }}
-          >
-            Teelaunch
-          </Typography>
-          {/* <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search> */}
+          {window.innerWidth < 800 ?
+            <>
+              <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem  key={page} onClick={handleCloseNavMenu}>
+                  <Link style={{textDecoration: 'none', color: "black"}}  to={page?.link}>{page?.name}</Link>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <Typography sx={{ textDecoration: 'none', color: 'white' }} to="/" component={Link}>Teelaunch</Typography>
+            </>
+            :
+            <>
+              <IconButton
+                size="medium"
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                sx={{ mr: 2 }}
+              >
+              </IconButton>
+              <Typography
+                variant="h6"
+                noWrap
+                component={Link}
+                to='/'
+                sx={{ flexGrow: 1, textDecoration: 'none', color: 'white' }}
+              >
+                Teelaunch
+              </Typography>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Button href='/' key='Home' sx={{ color: '#fff' }}>
+                  Home
+                </Button>
+                <Button href='/contactus' key='Contact' sx={{ color: '#fff' }}>
+                  ContactUs
+                </Button>
+                <Button href='/addtocart' key='addtocart' sx={{ color: '#fff' }}>
+                  AddToCart
+                </Button>
+              </Box>
+             
+            </>}
         </Toolbar>
       </AppBar>
     </Box>
   )
 }
+export default Navbar
